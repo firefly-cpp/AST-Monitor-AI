@@ -40,8 +40,8 @@ DOI: [10.3390/app112311452](https://doi.org/10.3390/app112311452)
 
 ## Install guide
 
-pip install -e packages/ast-monitor-ai
-pip install -e packages/ast-tools
+pip install -e packages/trendboard
+pip install -e packages/envimpact
 
 ## Execution
 

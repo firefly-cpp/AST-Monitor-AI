@@ -1,10 +1,13 @@
-from packages.trendboard.trendboard.ASTTCXReader import ASTTCXReader
+from trendboard.ASTTCXReader import ASTTCXReader
 import os
 
 if __name__ == "__main__":
-    reader = ASTTCXReader()
+    # init tcx-reader
     dirname = os.path.dirname(__file__)
-    print(dirname)
-    filename = os.path.join(dirname, 'tcx_path/1.tcx')
-    exercise = reader.read_from_tcx_files(filename)
-    print(exercise.calories)
+    directory_name = os.path.join(dirname, 'tcx_path')    
+    reader = ASTTCXReader(directory_name)
+
+    # calc average calories through multiple sessions
+    calories = reader.get_calory_average()
+
+    print(calories)

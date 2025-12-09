@@ -37,3 +37,12 @@ Trainer into practice. arXiv preprint [arXiv:2109.13334](https://arxiv.org/abs/2
 Fister Jr, I., Salcedo-Sanz, S., Iglesias, A., Fister, D., Gálvez, A., & Fister, I. (2021). New Perspectives in the
 Development of the Artificial Sport Trainer. Applied Sciences, 11(23), 11452.
 DOI: [10.3390/app112311452](https://doi.org/10.3390/app112311452)
+
+## Install guide
+
+pip install -e packages/ast-monitor-ai
+pip install -e packages/ast-tools
+
+## Execution
+
+python scripts/main.py

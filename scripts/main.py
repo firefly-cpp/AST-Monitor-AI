@@ -30,6 +30,6 @@ if __name__ == "__main__":
     # axes[0].set_xlabel("start time")
     # axes[0].set_ylabel("avgerage speed to average altitude")
     # plt.show()
-    reader.build_dashboard()
+    fig1, fig2, fig3, fig4 = reader.build_dashboard()
     
     

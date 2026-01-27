@@ -32,7 +32,7 @@ class ASTTCXReader:
             if file.endswith(".tcx"):
                 exercise = self.tcx_reader.read(os.path.join(self.dir_path, file), null_value_handling=1)
                 exercise_val.append((exercise.start_time, exercise))
-            if idx >= 800:
+            if idx >= 500:
                 self.exercises_val = exercise_val
                 return self.exercises_val                
         self.exercises_val = exercise_val
@@ -182,50 +182,50 @@ class ASTTCXReader:
         # tsb = ctl - atl
 
         # --- plots ---
-        fig, axes = plt.subplots()
-        weekly_km.plot()
-        axes.set_title("Weekly mileage (km)")
-        axes.set_xlabel("Week")
-        axes.set_ylabel("km")
-        fig.tight_layout()
-        plt.show()
+        # fig, axes = plt.subplots()
+        # weekly_km.plot()
+        # axes.set_title("Weekly mileage (km)")
+        # axes.set_xlabel("Week")
+        # axes.set_ylabel("km")
+        # fig.tight_layout()
+        # # plt.show()
 
 
-        fig, axes = plt.subplots()
-        atl.plot()
-        axes.set_title("Training load (ATL)")
-        axes.set_xlabel("Date")
-        axes.set_ylabel("TRIMP")
-        fig.tight_layout()
-        plt.show()
+        # fig, axes = plt.subplots()
+        # atl.plot()
+        # axes.set_title("Training load (ATL)")
+        # axes.set_xlabel("Date")
+        # axes.set_ylabel("TRIMP")
+        # fig.tight_layout()
+        # # plt.show()
 
-        fig, axes = plt.subplots()
-        ctl.plot()
-        axes.set_title("Training load (CTL)")
-        axes.set_xlabel("Date")
-        axes.set_ylabel("TRIMP")
-        fig.tight_layout()
-        plt.show()
+        # fig, axes = plt.subplots()
+        # ctl.plot()
+        # axes.set_title("Training load (CTL)")
+        # axes.set_xlabel("Date")
+        # axes.set_ylabel("TRIMP")
+        # fig.tight_layout()
+        # # plt.show()
 
-        fig, axes = plt.subplots()
-        weekly_z_hours.plot(kind="bar", stacked=True, ax=axes)
-        axes.set_title("Weekly HR zone distribution (hours)")
-        axes.set_xlabel("Week")
-        axes.set_ylabel("hours")
-        fig.tight_layout()
-        plt.show()
+        # fig, axes = plt.subplots()
+        # weekly_z_hours.plot(kind="bar", stacked=True, ax=axes)
+        # axes.set_title("Weekly HR zone distribution (hours)")
+        # axes.set_xlabel("Week")
+        # axes.set_ylabel("hours")
+        # fig.tight_layout()
+        # plt.show()
 
-        print(weekly_z_hours.columns)
-        print(weekly_z_hours.head())
+        # print(weekly_z_hours.columns)
+        # print(weekly_z_hours.head())
 
-        figuero = plotlyy.bar(
+        figuero1 = plotlyy.bar(
             weekly_z_hours,
             x="week",
             y=["z1_sec", "z2_sec", "z3_sec", "z4_sec", "z5_sec"],
             title="Weekly HR zone distribution (hours)")
-        figuero.show()
+        # figuero.show()
 
-        figuero = plotlyy.scatter(
+        figuero2 = plotlyy.scatter(
             total_summary,
             x="date",
             y="speed_kmh",
@@ -233,9 +233,9 @@ class ASTTCXReader:
             trendline="ols",
             title="Speed vs time (colored by HR)"
         )
-        figuero.show()
+        # figuero.show()
 
-        figuero = plotlyy.scatter(
+        figuero3 = plotlyy.scatter(
             total_summary,
             x="avg_h_r",
             y="speed_kmh",
@@ -243,7 +243,7 @@ class ASTTCXReader:
             trendline="ols",
             title="HR vs Speed efficiency"
         )
-        figuero.show()
+        # figuero.show()
         speed_bins = np.arange(0, total_summary["speed_kmh"].max() + 3, 3)
         dur_bins = np.arange(0, total_summary["duration_min"].max() + 15, 15)
         total_summary["speed_bin"] = pd.cut(total_summary["speed_kmh"], bins=speed_bins)
@@ -256,7 +256,7 @@ class ASTTCXReader:
         hm["speed_mid"] = hm["speed_bin"].apply(lambda x: x.mid)
         hm["dur_mid"]   = hm["dur_bin"].apply(lambda x: x.mid)
 
-        fig = plotlyy.density_heatmap(
+        figuero4 = plotlyy.density_heatmap(
             hm,
             x="speed_mid",
             y="dur_mid",
@@ -267,6 +267,6 @@ class ASTTCXReader:
             labels={"speed_mid":"Avg speed (km/h)", "dur_mid":"Duration (min)", "avg_h_r":"Avg HR (bpm)"},
             title="Heatmap: mean HR by speed × duration"
         )
-        fig.show()
+        # fig.show()
 
-        return total_summary, weekly_km, weekly_z_hours, daily_load, atl
+        return figuero1, figuero2, figuero3, figuero4 #total_summary, weekly_km, weekly_z_hours, daily_load, atl

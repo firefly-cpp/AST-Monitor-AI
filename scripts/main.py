@@ -3,11 +3,11 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # init tcx-reader
-    dirname = os.path.dirname(__file__)
-    directory_name = os.path.join(dirname, 'tcx_path')    
-    reader = ASTTCXReader(directory_name)
+dirname = os.path.dirname(__file__)
+directory_name = os.path.join(dirname, 'tcx_path')    
+reader = ASTTCXReader(directory_name)
 
     # calc average calories through multiple sessions
     # calories = reader.get_calory_average()
@@ -30,6 +30,6 @@ if __name__ == "__main__":
     # axes[0].set_xlabel("start time")
     # axes[0].set_ylabel("avgerage speed to average altitude")
     # plt.show()
-    fig1, fig2, fig3, fig4 = reader.build_dashboard()
+total_summary = reader.build_dashboard()
     
     

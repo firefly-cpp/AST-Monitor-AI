@@ -174,4 +174,3 @@ cython_debug/
 .pypirc
 
 scripts/tcx_path
-data

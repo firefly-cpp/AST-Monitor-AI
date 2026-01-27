@@ -45,8 +45,13 @@ pip install -e packages/trendboard
 pip install -e packages/envimpact
 ```
 
-## Execution
+## Run the dashboard
 
+Install the requirements specified in `requirements.txt` and then execute
 ```
-python scripts/main.py
+python app.py
 ```
+
+## Run the analysis for the environmental impact using the digital twin
+
+Follow the steps described in the [README](packages/envimpact/README.md) of the package to create a digital twin and get information about the environmental impact for a specific exercise.

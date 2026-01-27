@@ -11,13 +11,6 @@ def create_flask_server() -> Flask:
     def idx():
         return redirect("/dash/")
 
-    # @server.get("/idx")
-    # def index():
-    #     return render_template_string("""
-    #     <h1>Flask Home</h1>
-    #     <p><a href="/dash/">Go to Dash</a></p>
-    #     """)
-
     return server
 
 def create_dash_app(server: Flask) -> Dash:
@@ -41,8 +34,8 @@ def create_dash_app(server: Flask) -> Dash:
     dash_app.layout = html.Div(
         style={"maxWidth": 900, "margin": "40px auto", "fontFamily": "system-ui"},
         children=[
-            html.H2("Dash inside Flask"),
-            html.P("This Dash app is mounted at /dash/ and shares the same Flask server."),
+            html.H2("Dashboard"),
+            # html.P("This Dash app is mounted at /dash/ and shares the same Flask server."),
             dcc.Graph(figure=fig1),
             dcc.Graph(figure=fig2),
             dcc.Graph(figure=fig3),

@@ -17,6 +17,7 @@ class AthleteConfig:
     coefficient = (1, 2, 3, 4, 5)
     b:float = 1.92
 
+READ_LIMIT = 600
 
 class ASTTCXReader:
     def __init__(self, dir_path):
@@ -32,7 +33,7 @@ class ASTTCXReader:
             if file.endswith(".tcx"):
                 exercise = self.tcx_reader.read(os.path.join(self.dir_path, file), null_value_handling=1)
                 exercise_val.append((exercise.start_time, exercise))
-            if idx >= 800:
+            if idx >= READ_LIMIT:
                 self.exercises_val = exercise_val
                 return self.exercises_val                
         self.exercises_val = exercise_val
@@ -167,11 +168,7 @@ class ASTTCXReader:
         total_summary["month"] = total_summary["date"].dt.to_period("M").astype(str)
         total_summary["week"] = total_summary["date"].dt.to_period("W").astype(str)
 
-        weekly_km = total_summary.groupby("week")["distance_km"].sum()
-        zone_cols = [f"z{k}_sec" for k in range(1, 6)]
-        weekly_z_hours = total_summary.groupby("week")[zone_cols].sum().div(3600.0).reset_index()
-
-        weekly_z_hours["week"] = total_summary["week"]
+        #weekly_km = total_summary.groupby("week")["distance_km"].sum()        
 
         daily_load = total_summary.groupby("date")["trimp_bannister"].sum()
         daily_load.index = pd.to_datetime(daily_load.index)
@@ -182,60 +179,79 @@ class ASTTCXReader:
         # tsb = ctl - atl
 
         # --- plots ---
-        fig, axes = plt.subplots()
-        weekly_km.plot()
-        axes.set_title("Weekly mileage (km)")
-        axes.set_xlabel("Week")
-        axes.set_ylabel("km")
-        fig.tight_layout()
-        plt.show()
+        # fig, axes = plt.subplots()
+        # weekly_km.plot()
+        # axes.set_title("Weekly mileage (km)")
+        # axes.set_xlabel("Week")
+        # axes.set_ylabel("km")
+        # fig.tight_layout()
+        # # plt.show()
 
 
-        fig, axes = plt.subplots()
-        atl.plot()
-        axes.set_title("Training load (ATL)")
-        axes.set_xlabel("Date")
-        axes.set_ylabel("TRIMP")
-        fig.tight_layout()
-        plt.show()
+        # fig, axes = plt.subplots()
+        # atl.plot()
+        # axes.set_title("Training load (ATL)")
+        # axes.set_xlabel("Date")
+        # axes.set_ylabel("TRIMP")
+        # fig.tight_layout()
+        # # plt.show()
 
-        fig, axes = plt.subplots()
-        ctl.plot()
-        axes.set_title("Training load (CTL)")
-        axes.set_xlabel("Date")
-        axes.set_ylabel("TRIMP")
-        fig.tight_layout()
-        plt.show()
+        # fig, axes = plt.subplots()
+        # ctl.plot()
+        # axes.set_title("Training load (CTL)")
+        # axes.set_xlabel("Date")
+        # axes.set_ylabel("TRIMP")
+        # fig.tight_layout()
+        # # plt.show()
 
-        fig, axes = plt.subplots()
-        weekly_z_hours.plot(kind="bar", stacked=True, ax=axes)
-        axes.set_title("Weekly HR zone distribution (hours)")
-        axes.set_xlabel("Week")
-        axes.set_ylabel("hours")
-        fig.tight_layout()
-        plt.show()
+        # fig, axes = plt.subplots()
+        # weekly_z_hours.plot(kind="bar", stacked=True, ax=axes)
+        # axes.set_title("Weekly HR zone distribution (hours)")
+        # axes.set_xlabel("Week")
+        # axes.set_ylabel("hours")
+        # fig.tight_layout()
+        # plt.show()
 
-        print(weekly_z_hours.columns)
-        print(weekly_z_hours.head())
+        # print(weekly_z_hours.columns)
+        # print(weekly_z_hours.head())
+        return total_summary
+    
+    # zone_cols = [f"z{k}_sec" for k in range(1, 6)]
+    # weekly_z_hours = total_summary.groupby("week")[zone_cols].sum().div(3600.0).reset_index()
+    # weekly_z_hours["week"] = total_summary["week"]
+        
+    
+    def return_figures(self, total_summary: pd.DataFrame, period):
+        # figuero1 = plotlyy.bar(
+        #     weekly_z_hours,
+        #     x="week",
+        #     y=["z1_sec", "z2_sec", "z3_sec", "z4_sec", "z5_sec"],
+        #     title="Weekly HR zone distribution (hours)")
+        # figuero.show()
 
-        figuero = plotlyy.bar(
+        weekly_z_hours = self.hr_zones_summary(total_summary, period)
+        figuero1 = plotlyy.pie(
             weekly_z_hours,
-            x="week",
-            y=["z1_sec", "z2_sec", "z3_sec", "z4_sec", "z5_sec"],
-            title="Weekly HR zone distribution (hours)")
-        figuero.show()
-
-        figuero = plotlyy.scatter(
-            total_summary,
-            x="date",
-            y="speed_kmh",
-            color="avg_h_r",
-            trendline="ols",
-            title="Speed vs time (colored by HR)"
+            names="category",
+            values="value"
         )
-        figuero.show()
 
-        figuero = plotlyy.scatter(
+        fig2_df = total_summary.copy()
+        fig2_df = fig2_df.dropna(subset=["avg_h_r"])
+        fig2_df = fig2_df[fig2_df["speed_kmh"] > 0]
+        fig2_df["speed_kmh_per_avg_h_r"] = fig2_df["speed_kmh"].fillna(0).div(fig2_df["avg_h_r"])
+
+        figuero2 = plotlyy.scatter(
+            fig2_df,
+            x="date",
+            y="speed_kmh_per_avg_h_r",
+            #color="avg_h_r",
+            trendline="ols",
+            title="Speed/Heart-rate relation vs time"
+        )
+        # figuero.show()
+
+        figuero3 = plotlyy.scatter(
             total_summary,
             x="avg_h_r",
             y="speed_kmh",
@@ -243,7 +259,7 @@ class ASTTCXReader:
             trendline="ols",
             title="HR vs Speed efficiency"
         )
-        figuero.show()
+        # figuero.show()
         speed_bins = np.arange(0, total_summary["speed_kmh"].max() + 3, 3)
         dur_bins = np.arange(0, total_summary["duration_min"].max() + 15, 15)
         total_summary["speed_bin"] = pd.cut(total_summary["speed_kmh"], bins=speed_bins)
@@ -256,7 +272,7 @@ class ASTTCXReader:
         hm["speed_mid"] = hm["speed_bin"].apply(lambda x: x.mid)
         hm["dur_mid"]   = hm["dur_bin"].apply(lambda x: x.mid)
 
-        fig = plotlyy.density_heatmap(
+        figuero4 = plotlyy.density_heatmap(
             hm,
             x="speed_mid",
             y="dur_mid",
@@ -267,6 +283,22 @@ class ASTTCXReader:
             labels={"speed_mid":"Avg speed (km/h)", "dur_mid":"Duration (min)", "avg_h_r":"Avg HR (bpm)"},
             title="Heatmap: mean HR by speed × duration"
         )
-        fig.show()
+        # fig.show()
 
-        return total_summary, weekly_km, weekly_z_hours, daily_load, atl
+        return figuero1, figuero2, figuero3, figuero4 #total_summary, weekly_km, weekly_z_hours, daily_load, atl
+
+    def hr_zones_summary(self, total_summary: pd.DataFrame, period: str) -> pd.DataFrame:
+        df = total_summary.copy()
+        df["date"] = pd.to_datetime(df["date"])
+        max_date = df["date"].max()
+
+        start = max_date - pd.to_timedelta(period)
+
+        zone_cols = [f"z{i}_sec" for i in range(1, 6)]
+        sums = df.loc[df["date"] >= start, zone_cols].sum()
+
+        out = (sums
+            .rename_axis("category")
+            .reset_index(name="value"))
+
+        return out

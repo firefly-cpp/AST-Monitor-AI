@@ -37,3 +37,21 @@ Trainer into practice. arXiv preprint [arXiv:2109.13334](https://arxiv.org/abs/2
 Fister Jr, I., Salcedo-Sanz, S., Iglesias, A., Fister, D., Gálvez, A., & Fister, I. (2021). New Perspectives in the
 Development of the Artificial Sport Trainer. Applied Sciences, 11(23), 11452.
 DOI: [10.3390/app112311452](https://doi.org/10.3390/app112311452)
+
+## Install guide
+
+```
+pip install -e packages/trendboard
+pip install -e packages/envimpact
+```
+
+## Run the dashboard
+
+Install the requirements specified in `requirements.txt` and then execute
+```
+python app.py
+```
+
+## Run the analysis for the environmental impact using the digital twin
+
+Follow the steps described in the [README](packages/envimpact/README.md) of the package to create a digital twin and get information about the environmental impact for a specific exercise.
